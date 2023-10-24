@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <h1>Peripheral</h1>
+    <ul class="list-group list-group-flush">
+        {% for category in category_list %}
+            <h2 class="pt-5">{{ category.category_description  }}</h2>
+                {% for peripheral in peripheral_list %}
+                    {% if peripheral.category_id == category.category_id %}
+                        {% if peripheral.status == 0 %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 pb-0">
+                            <h3><del>{{ peripheral.peripheral_description }}</del></h3>
+                        </li>
+                        <li class="list-group-item pt-0">
+                            <p>{{ peripheral.unique_number }}</p>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 pb-0">
+                            <h3>{{ peripheral.peripheral_description }}</h3>
+                        </li>
+                        <li class="list-group-item pt-0">
+                            <p>{{ peripheral.unique_number }}</p>
+                        </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+        {% endfor %}
+    </ul>
+    <div class="d-flex justify-content-center align-items-center">
+        <!-- Centered button -->
+        <button class="btn btn-primary">Proceed</button>
+    </div>
+
+</div>
+{% endblock content %}

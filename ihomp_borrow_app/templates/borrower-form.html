@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">IHOMP Borrow Form</h1>
+    <form method="post" action="/">
+        {% csrf_token %}
+        <div class="form-group mb-4">
+            <label for="borrower_name">Name:</label>
+            <input class="form-control" type="text" id="borrower_name" name="borrower_name" required>
+        </div>
+        <div class="form-group mb-4">
+            <label for="department">Department:</label>
+                <select class="form-control" id="department" name="department" required>
+                {% for department in department_list %}
+                    <option value="{{ department }}">{{ department }}</option>
+                {% endfor %}
+                </select>
+        </div>
+        <div class="form-group mb-4">
+            <label for="category">Category:</label>
+                <select class="form-control" id="category" name="category" required>
+                {% for category in category_list %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+                </select>
+        </div>
+
+        <div class="form-group mb-4">
+                <label for="peripheral">Peripheral:</label>
+                <select class="form-control" id="peripheral" name="peripheral" required>
+                {% for peripheral in peripheral_list %}
+                        <option value="{{ peripheral }}">{{ peripheral }}</option>
+                {% endfor %}
+                </select>
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="unique_number">Unique Number:</label>
+            <select class="form-control" id="unique_number" name="unique_number" required>
+                {% for peripheral in peripheral_list %}
+                    <option value="{{ peripheral.unique_number }}">{{ peripheral.unique_number }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-secondary mb-4" type="submit">Submit</button>
+
+        {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </form>
+</div>
+{% endblock content %}

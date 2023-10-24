@@ -3,4 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.CombinedListView.as_view(), name='home'),
+    path('borrow/', views.borrow_form, name='borrow')
 ]

@@ -7,6 +7,12 @@ STATUS = (
 )
 
 
+BORROW_STATUS = (
+    (0, "DEPARTED"),
+    (1, "RETURNED")
+)
+
+
 class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_description = models.CharField(max_length=2000)
@@ -41,7 +47,6 @@ class Department(models.Model):
         return self.department_description
 
 
-
 class Borrow(models.Model):
     borrow_id = models.AutoField(primary_key=True)
     borrower_name = models.CharField(max_length=2000)
@@ -49,13 +54,10 @@ class Borrow(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     peripheral = models.ForeignKey(Peripheral, on_delete=models.PROTECT)
     unique_number = models.CharField(max_length=2000, blank=True)
-    status = models.IntegerField(choices=STATUS, default=1)
+    status = models.IntegerField(choices=BORROW_STATUS, default=1)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.borrower_name
-
-
-
 
