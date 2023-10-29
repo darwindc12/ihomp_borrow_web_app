@@ -1,17 +1,15 @@
-from django.db import models
 
+from django.db import models
 
 STATUS = (
     (0, "Unavailable"),
     (1, "Available")
 )
 
-
 BORROW_STATUS = (
     (0, "DEPARTED"),
     (1, "RETURNED")
 )
-
 
 class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
@@ -22,11 +20,10 @@ class Category(models.Model):
     def __str__(self):
         return self.category_description
 
-
 class Peripheral(models.Model):
     peripheral_id = models.AutoField(primary_key=True)
     peripheral_description = models.CharField(max_length=2000)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='peripherals')
     unique_number = models.CharField(max_length=2000, unique=True)
     status = models.IntegerField(choices=STATUS, default=1)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -34,7 +31,6 @@ class Peripheral(models.Model):
 
     def __str__(self):
         return self.peripheral_description
-
 
 class Department(models.Model):
     department_id = models.AutoField(primary_key=True)
@@ -45,7 +41,6 @@ class Department(models.Model):
 
     def __str__(self):
         return self.department_description
-
 
 class Borrow(models.Model):
     borrow_id = models.AutoField(primary_key=True)
@@ -60,4 +55,3 @@ class Borrow(models.Model):
 
     def __str__(self):
         return self.borrower_name
-

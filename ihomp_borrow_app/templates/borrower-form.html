@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div class="container">
     <h1 class="mt-4 mb-4">IHOMP Borrow Form</h1>
@@ -10,36 +11,34 @@
         </div>
         <div class="form-group mb-4">
             <label for="department">Department:</label>
-                <select class="form-control" id="department" name="department" required>
+            <select class="form-control" id="department" name="department" required>
+                <option value="">Select a Department</option>
                 {% for department in department_list %}
-                    <option value="{{ department }}">{{ department }}</option>
+                    <option value="{{ department.department_id }}">{{ department.department_description }}</option>
                 {% endfor %}
-                </select>
+            </select>
         </div>
         <div class="form-group mb-4">
             <label for="category">Category:</label>
-                <select class="form-control" id="category" name="category" required>
+            <select class="form-control" id="category" name="category" required>
+                <option value="">Select a Category</option>
                 {% for category in category_list %}
-                    <option value="{{ category }}">{{ category }}</option>
+                    <option value="{{ category.category_id }}">{{ category.category_description }}</option>
                 {% endfor %}
-                </select>
+            </select>
         </div>
 
         <div class="form-group mb-4">
-                <label for="peripheral">Peripheral:</label>
-                <select class="form-control" id="peripheral" name="peripheral" required>
-                {% for peripheral in peripheral_list %}
-                        <option value="{{ peripheral }}">{{ peripheral }}</option>
-                {% endfor %}
-                </select>
+            <label for="peripheral">Peripheral:</label>
+            <select class="form-control" id="peripheral" name="peripheral" required>
+                <option value="">Select a Category First</option>
+            </select>
         </div>
 
         <div class="form-group mb-4">
             <label for="unique_number">Unique Number:</label>
             <select class="form-control" id="unique_number" name="unique_number" required>
-                {% for peripheral in peripheral_list %}
-                    <option value="{{ peripheral.unique_number }}">{{ peripheral.unique_number }}</option>
-                {% endfor %}
+                <option value="">Select a Peripheral First</option>
             </select>
         </div>
         <button class="btn btn-secondary mb-4" type="submit">Submit</button>
@@ -51,7 +50,75 @@
             {% endfor %}
         </div>
         {% endif %}
-
     </form>
 </div>
+
+<script>
+document.getElementById("category").addEventListener("change", function() {
+    var selectedCategoryId = this.value;
+    var peripheralDropdown = document.getElementById("peripheral");
+    var uniqueNumberDropdown = document.getElementById("unique_number"); // Define the unique number dropdown
+    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    if (selectedCategoryId) {
+        // Make an AJAX request to fetch peripherals for the selected category
+        fetch(`/get_peripherals/${selectedCategoryId}/`, {
+            method: "GET",
+            headers: {
+                "X-CSRFToken": csrfToken,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            peripheralDropdown.innerHTML = "";
+            uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>'; // Reset unique number dropdown
+
+            data.peripherals.forEach(function(peripheral) {
+                var option = document.createElement("option");
+                option.value = peripheral.peripheral_id;
+                option.text = peripheral.peripheral_description;
+                peripheralDropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching peripherals: " + error);
+        });
+    } else {
+        peripheralDropdown.innerHTML = '<option value="">Select a Category First</option>';
+        uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
+    }
+});
+
+document.getElementById("peripheral").addEventListener("change", function() {
+    var selectedPeripheralId = this.value;
+    var uniqueNumberDropdown = document.getElementById("unique_number");
+    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    if (selectedPeripheralId) {
+        // Make an AJAX request to fetch unique numbers for the selected peripheral
+        fetch(`/get_unique_numbers/${selectedPeripheralId}/`, {
+            method: "GET",
+            headers: {
+                "X-CSRFToken": csrfToken,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            uniqueNumberDropdown.innerHTML = ""; // Clear the current options
+
+            data.unique_numbers.forEach(function(uniqueNumber) {
+                var option = document.createElement("option");
+                option.value = uniqueNumber;
+                option.text = uniqueNumber;
+                uniqueNumberDropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching unique numbers: " + error);
+        });
+    } else {
+        uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
+    }
+});
+</script>
 {% endblock content %}

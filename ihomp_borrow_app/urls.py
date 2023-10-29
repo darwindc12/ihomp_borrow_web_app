@@ -3,5 +3,9 @@ from . import views
 
 urlpatterns = [
     path('', views.CombinedListView.as_view(), name='home'),
-    path('borrow/', views.borrow_form, name='borrow')
+    path('borrow/', views.borrow_form, name='borrow'),
+    path('get_peripherals/<int:category_id>/', views.get_peripherals, name='get_peripherals'),
+    path('get_unique_numbers/<int:peripheral_id>/', views.get_unique_numbers, name='get_unique_numbers'),
+
+
 ]
