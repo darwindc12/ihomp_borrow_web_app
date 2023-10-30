@@ -21,8 +21,6 @@ class CombinedListView(generic.ListView):
         return context
 
 
-from django.http import JsonResponse
-from django.shortcuts import render
 
 def borrow_form(request):
     department_list = Department.objects.all()
@@ -60,26 +58,21 @@ def borrow_form(request):
 
 
 def get_peripherals(request, category_id):
-    # Retrieve peripherals for the selected category
-    try:
-        category = Category.objects.get(category_id=category_id)
-        peripherals = Peripheral.objects.filter(category=category)
-        peripherals_data = [{'peripheral_id': p.peripheral_id, 'peripheral_description': p.peripheral_description} for p in peripherals]
-        return JsonResponse({'peripherals': peripherals_data})
-    except Category.DoesNotExist:
-        return JsonResponse({'peripherals': []})
+    peripherals = Peripheral.objects.filter(category_id=category_id, status=1)
+    data = [{"peripheral_id": peripheral.peripheral_id, "peripheral_description": peripheral.peripheral_description} for peripheral in peripherals]
+    return JsonResponse({"peripherals": data})
 
 
 def get_unique_numbers(request, peripheral_id):
     try:
-        peripheral = Peripheral.objects.get(peripheral_id=peripheral_id)
-        if peripheral:
-            unique_numbers = peripheral.unique_number.split(',') if peripheral.unique_number else []
-        else:
-            unique_numbers = []
-
-        return JsonResponse({'unique_numbers': unique_numbers})
+        peripheral = Peripheral.objects.get(pk=peripheral_id)
+        unique_numbers = peripheral.unique_number.split(',') if peripheral.unique_number else []
+        data = [{"unique_number_id": peripheral.peripheral_id, "unique_number_description": peripheral.unique_number} for number in unique_numbers]
     except Peripheral.DoesNotExist:
-        return JsonResponse({'unique_numbers': []})
+        data = []
+
+    return JsonResponse({"uniqueNumbers": data})
+
+
 
 

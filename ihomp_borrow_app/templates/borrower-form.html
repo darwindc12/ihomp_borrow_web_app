@@ -27,18 +27,22 @@
                 {% endfor %}
             </select>
         </div>
-
         <div class="form-group mb-4">
             <label for="peripheral">Peripheral:</label>
             <select class="form-control" id="peripheral" name="peripheral" required>
                 <option value="">Select a Category First</option>
+                {% for peripheral in peripheral_list %}
+                    <option value="{{ peripheral.peripheral_id }}">{{ peripheral.peripheral_description }}</option>
+                {% endfor %}
             </select>
         </div>
-
         <div class="form-group mb-4">
             <label for="unique_number">Unique Number:</label>
             <select class="form-control" id="unique_number" name="unique_number" required>
                 <option value="">Select a Peripheral First</option>
+                {% for number in unique_number_list %}
+                    <option value="{{ number.unique_number_id }}">{{ number.unique_number_description }}</option>
+                {% endfor %}
             </select>
         </div>
         <button class="btn btn-secondary mb-4" type="submit">Submit</button>
@@ -57,7 +61,7 @@
 document.getElementById("category").addEventListener("change", function() {
     var selectedCategoryId = this.value;
     var peripheralDropdown = document.getElementById("peripheral");
-    var uniqueNumberDropdown = document.getElementById("unique_number"); // Define the unique number dropdown
+    var uniqueNumberDropdown = document.getElementById("unique_number");
     var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     if (selectedCategoryId) {
@@ -71,7 +75,7 @@ document.getElementById("category").addEventListener("change", function() {
         .then(response => response.json())
         .then(data => {
             peripheralDropdown.innerHTML = "";
-            uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>'; // Reset unique number dropdown
+            uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
 
             data.peripherals.forEach(function(peripheral) {
                 var option = document.createElement("option");
@@ -96,7 +100,7 @@ document.getElementById("peripheral").addEventListener("change", function() {
 
     if (selectedPeripheralId) {
         // Make an AJAX request to fetch unique numbers for the selected peripheral
-        fetch(`/get_unique_numbers/${selectedPeripheralId}/`, {
+        fetch(`/get_unique_number/${selectedPeripheralId}/`, {
             method: "GET",
             headers: {
                 "X-CSRFToken": csrfToken,
@@ -104,14 +108,17 @@ document.getElementById("peripheral").addEventListener("change", function() {
         })
         .then(response => response.json())
         .then(data => {
-            uniqueNumberDropdown.innerHTML = ""; // Clear the current options
-
-            data.unique_numbers.forEach(function(uniqueNumber) {
-                var option = document.createElement("option");
-                option.value = uniqueNumber;
-                option.text = uniqueNumber;
-                uniqueNumberDropdown.appendChild(option);
-            });
+            uniqueNumberDropdown.innerHTML = "";
+            if (data.uniqueNumbers.length > 0) {
+                data.uniqueNumbers.forEach(function(number) {
+                    var option = document.createElement("option");
+                    option.value = unique_number.unique_number_id;
+                    option.text = unique_number.unique_number_description;
+                    uniqueNumberDropdown.appendChild(option);
+                });
+            } else {
+                uniqueNumberDropdown.innerHTML = '<option value="">No unique numbers available</option>';
+            }
         })
         .catch(error => {
             console.error("Error fetching unique numbers: " + error);
@@ -120,5 +127,7 @@ document.getElementById("peripheral").addEventListener("change", function() {
         uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
     }
 });
+
+
 </script>
 {% endblock content %}
