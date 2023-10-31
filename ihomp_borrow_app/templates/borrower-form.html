@@ -31,18 +31,12 @@
             <label for="peripheral">Peripheral:</label>
             <select class="form-control" id="peripheral" name="peripheral" required>
                 <option value="">Select a Category First</option>
-                {% for peripheral in peripheral_list %}
-                    <option value="{{ peripheral.peripheral_id }}">{{ peripheral.peripheral_description }}</option>
-                {% endfor %}
             </select>
         </div>
         <div class="form-group mb-4">
             <label for="unique_number">Unique Number:</label>
             <select class="form-control" id="unique_number" name="unique_number" required>
                 <option value="">Select a Peripheral First</option>
-                {% for number in unique_number_list %}
-                    <option value="{{ number.unique_number_id }}">{{ number.unique_number_description }}</option>
-                {% endfor %}
             </select>
         </div>
         <button class="btn btn-secondary mb-4" type="submit">Submit</button>
@@ -61,7 +55,6 @@
 document.getElementById("category").addEventListener("change", function() {
     var selectedCategoryId = this.value;
     var peripheralDropdown = document.getElementById("peripheral");
-    var uniqueNumberDropdown = document.getElementById("unique_number");
     var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     if (selectedCategoryId) {
@@ -74,9 +67,8 @@ document.getElementById("category").addEventListener("change", function() {
         })
         .then(response => response.json())
         .then(data => {
-            peripheralDropdown.innerHTML = "";
-            uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
-
+            peripheralDropdown.innerHTML = ""; // Clear the existing options
+            peripheralDropdown.appendChild(new Option("Select a Peripheral", ""));
             data.peripherals.forEach(function(peripheral) {
                 var option = document.createElement("option");
                 option.value = peripheral.peripheral_id;
@@ -89,8 +81,11 @@ document.getElementById("category").addEventListener("change", function() {
         });
     } else {
         peripheralDropdown.innerHTML = '<option value="">Select a Category First</option>';
-        uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
     }
+
+    // Clear the "Unique Number" dropdown when the category changes
+    var uniqueNumberDropdown = document.getElementById("unique_number");
+    uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
 });
 
 document.getElementById("peripheral").addEventListener("change", function() {
@@ -112,8 +107,8 @@ document.getElementById("peripheral").addEventListener("change", function() {
             if (data.uniqueNumbers.length > 0) {
                 data.uniqueNumbers.forEach(function(number) {
                     var option = document.createElement("option");
-                    option.value = unique_number.unique_number_id;
-                    option.text = unique_number.unique_number_description;
+                    option.value = number.unique_number_id;
+                    option.text = number.unique_number_description;
                     uniqueNumberDropdown.appendChild(option);
                 });
             } else {
@@ -127,6 +122,8 @@ document.getElementById("peripheral").addEventListener("change", function() {
         uniqueNumberDropdown.innerHTML = '<option value="">Select a Peripheral First</option>';
     }
 });
+
+
 
 
 </script>

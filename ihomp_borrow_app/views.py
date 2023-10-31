@@ -60,14 +60,16 @@ def borrow_form(request):
 def get_peripherals(request, category_id):
     peripherals = Peripheral.objects.filter(category_id=category_id, status=1)
     data = [{"peripheral_id": peripheral.peripheral_id, "peripheral_description": peripheral.peripheral_description} for peripheral in peripherals]
+    print(data)
     return JsonResponse({"peripherals": data})
 
 
-def get_unique_numbers(request, peripheral_id):
+def get_unique_number(request, peripheral_id):
     try:
         peripheral = Peripheral.objects.get(pk=peripheral_id)
         unique_numbers = peripheral.unique_number.split(',') if peripheral.unique_number else []
-        data = [{"unique_number_id": peripheral.peripheral_id, "unique_number_description": peripheral.unique_number} for number in unique_numbers]
+        data = [{"unique_number_id": num, "unique_number_description": num} for num in unique_numbers]
+        print(data)
     except Peripheral.DoesNotExist:
         data = []
 
